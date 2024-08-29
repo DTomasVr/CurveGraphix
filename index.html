@@ -1,16 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Curve Graphics App</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <h1>Curve Graphics with Cubic Splines</h1>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Curve Graphics using Cubic Splines</h1>
+
+    <!-- Form for inputting X and Y values -->
+    <form id="point-form">
+      <label for="x-value">X:</label>
+      <input type="number" id="x-value" name="x-value" />
+      <label for="y-value">Y:</label>
+      <input type="number" id="y-value" name="y-value" />
+      <button type="button" id="add-point-btn">Add Point</button>
+    </form>
+
     <button id="reset-btn">Reset</button>
 
-    <canvas id="canvas"></canvas>
+    <div id="canvas-container">
+      <canvas id="canvas"></canvas>
+      <!-- Axis labels will be drawn here -->
+      <div id="x-axis-labels"></div>
+      <div id="y-axis-labels"></div>
+    </div>
+
     <script src="app.js"></script>
-</body>
+  </body>
 </html>

@@ -1,11 +1,58 @@
 body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: Arial, sans-serif;
+}
+
+#canvas-container {
+  position: relative;
+  width: 800px;
+  height: 600px;
+  border: 1px solid black;
+  margin-top: 20px;
 }
 
 canvas {
-    border: 1px solid black;
-    margin-top: 20px;
+  position: absolute;
+  left: 40px;
+  top: 0;
+}
+
+#x-axis-labels {
+  position: absolute;
+  top: 610px; /* Adjust this value based on the height of your canvas */
+  left: 40px; /* Align with canvas */
+  width: 760px;
+  height: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+
+#y-axis-labels {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 600px;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+}
+
+#point-form {
+  margin-bottom: 10px;
+}
+
+#point-form label {
+  margin-right: 5px;
+}
+
+#point-form input {
+  margin-right: 10px;
+  width: 50px;
+}
+
+#add-point-btn {
+  margin-left: 5px;
 }

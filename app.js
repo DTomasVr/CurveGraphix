@@ -10,25 +10,37 @@ ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 let controlPoints = [];
 
-canvas.addEventListener('click', (event) => {
-    const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
 
-    // Check if there are any points already, and if the new x value is greater than the last point's x
-    if (controlPoints.length === 0 || x > controlPoints[controlPoints.length - 1].x) {
+document.getElementById('add-point-btn').addEventListener('click', () => {
+    const xInput = document.getElementById('x-value');
+    const yInput = document.getElementById('y-value');
+
+    const x = parseFloat(xInput.value);
+    const y = parseFloat(yInput.value);
+
+    if (!isNaN(x) && !isNaN(y)) {
         controlPoints.push({ x, y });
         drawPoints();
     } else {
-        alert("You must place the new point to the right of the last point.");
+        alert('Please enter valid X and Y values.');
     }
+    
+    // Clear the input fields
+    xInput.value = '';
+    yInput.value = '';
 });
 
 
 function drawPoints() {
+    const { scaleX, scaleY, offsetX, offsetY } = calculateScaleAndOffsets();
+
+    ctx.setTransform(scaleX, 0, 0, -scaleY, offsetX, canvas.height + offsetY); // Invert Y-axis
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#f0f0f0';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    drawGridLines();
+    drawAxisLabels();
 
     ctx.fillStyle = '#0000ff';
     controlPoints.forEach(point => {
@@ -39,6 +51,76 @@ function drawPoints() {
 
     if (controlPoints.length > 1) {
         drawSpline();
+    }
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transformation
+}
+
+function drawGridLines() {
+    const gridSpacing = 20;
+    ctx.strokeStyle = '#ccc';
+    ctx.lineWidth = 1;
+
+    // Vertical grid lines
+    for (let x = 0; x <= canvas.width; x += gridSpacing) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+    }
+
+    // Horizontal grid lines
+    for (let y = 0; y <= canvas.height; y += gridSpacing) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+    }
+}
+
+function calculateScaleAndOffsets() {
+    const minX = Math.min(...controlPoints.map(p => p.x), 0);
+    const maxX = Math.max(...controlPoints.map(p => p.x), canvas.width);
+    const minY = Math.min(...controlPoints.map(p => p.y), 0);
+    const maxY = Math.max(...controlPoints.map(p => p.y), canvas.height);
+
+    const scaleX = canvas.width / (maxX - minX);
+    const scaleY = canvas.height / (maxY - minY);
+
+    const offsetX = -minX * scaleX;
+    const offsetY = -minY * scaleY;
+
+    return { scaleX, scaleY, offsetX, offsetY };
+}
+
+function drawAxisLabels() {
+    const xAxisContainer = document.getElementById('x-axis-labels');
+    const yAxisContainer = document.getElementById('y-axis-labels');
+
+    // Clear previous labels
+    xAxisContainer.innerHTML = '';
+    yAxisContainer.innerHTML = '';
+
+    const gridSpacing = 20;
+
+    // X axis labels
+    for (let x = 0; x <= canvas.width; x += gridSpacing) {
+        const xLabel = document.createElement('div');
+        xLabel.textContent = x;
+        xLabel.style.position = 'absolute';
+        xLabel.style.left = `${x}px`;
+        xLabel.style.transform = 'translateX(-50%)';
+        xAxisContainer.appendChild(xLabel);
+    }
+
+    // Y axis labels
+    for (let y = 0; y <= canvas.height; y += gridSpacing) {
+        const yLabel = document.createElement('div');
+        yLabel.textContent = (canvas.height - y);
+        yLabel.style.position = 'absolute';
+        yLabel.style.bottom = `${y}px`;
+        yLabel.style.transform = 'translateY(50%)';
+        yAxisContainer.appendChild(yLabel);
     }
 }
 
