@@ -1,158 +1,107 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
+const inputN = document.getElementById('input-n');
+const generarBtn = document.getElementById('generar-btn');
+const reiniciarBtn = document.getElementById('reiniciar-btn');
+const outputBox = document.getElementById('output-box');
 
+// Set canvas dimensions
 canvas.width = 800;
 canvas.height = 600;
 
+// Flip the y-axis and move the origin to the bottom-left corner
+ctx.translate(0, canvas.height);
+ctx.scale(1, -1);
+
+// Fill the initial background
 ctx.fillStyle = '#f0f0f0';
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+let puntosControl = [];
+let n = 0;
+let clickCount = 0;
 
-let controlPoints = [];
-
-
-document.getElementById('add-point-btn').addEventListener('click', () => {
-    const xInput = document.getElementById('x-value');
-    const yInput = document.getElementById('y-value');
-
-    const x = parseFloat(xInput.value);
-    const y = parseFloat(yInput.value);
-
-    if (!isNaN(x) && !isNaN(y)) {
-        controlPoints.push({ x, y });
-        drawPoints();
-    } else {
-        alert('Please enter valid X and Y values.');
+// Event listener for generating points
+generarBtn.addEventListener('click', () => {
+    n = parseInt(inputN.value);
+    if (n < 8 || n > 12 || isNaN(n)) {
+        alert("Por favor, ingrese un número válido entre 8 y 12.");
+        return;
     }
-    
-    // Clear the input fields
-    xInput.value = '';
-    yInput.value = '';
+    clickCount = 0;
+    puntosControl = [];
+    dibujarPuntos();
+    outputBox.innerHTML = '';
 });
 
+// Event listener for placing control points
+canvas.addEventListener('click', (event) => {
+    if (clickCount < n) {
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = canvas.height - (event.clientY - rect.top); // Adjust y for flipped coordinates
 
-function drawPoints() {
-    const { scaleX, scaleY, offsetX, offsetY } = calculateScaleAndOffsets();
+        if (puntosControl.length === 0 || x > puntosControl[puntosControl.length - 1].x) {
+            puntosControl.push({ x, y });
+            clickCount++;
+            dibujarPuntos();
+            mostrarPuntos();
 
-    ctx.setTransform(scaleX, 0, 0, -scaleY, offsetX, canvas.height + offsetY); // Invert Y-axis
+            if (clickCount === n) {
+                generarBtn.disabled = true;
+            }
+        } else {
+            alert("Debe colocar el nuevo punto a la derecha del último punto.");
+        }
+    }
+});
+
+// Function to draw the control points
+function dibujarPuntos() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#f0f0f0';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    drawGridLines();
-    drawAxisLabels();
-
     ctx.fillStyle = '#0000ff';
-    controlPoints.forEach(point => {
+    puntosControl.forEach(punto => {
         ctx.beginPath();
-        ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+        ctx.arc(punto.x, punto.y, 5, 0, 2 * Math.PI);
         ctx.fill();
     });
 
-    if (controlPoints.length > 1) {
-        drawSpline();
-    }
-
-    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transformation
-}
-
-function drawGridLines() {
-    const gridSpacing = 20;
-    ctx.strokeStyle = '#ccc';
-    ctx.lineWidth = 1;
-
-    // Vertical grid lines
-    for (let x = 0; x <= canvas.width; x += gridSpacing) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-        ctx.stroke();
-    }
-
-    // Horizontal grid lines
-    for (let y = 0; y <= canvas.height; y += gridSpacing) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
+    if (puntosControl.length > 1) {
+        dibujarSpline();
     }
 }
 
-function calculateScaleAndOffsets() {
-    const minX = Math.min(...controlPoints.map(p => p.x), 0);
-    const maxX = Math.max(...controlPoints.map(p => p.x), canvas.width);
-    const minY = Math.min(...controlPoints.map(p => p.y), 0);
-    const maxY = Math.max(...controlPoints.map(p => p.y), canvas.height);
-
-    const scaleX = canvas.width / (maxX - minX);
-    const scaleY = canvas.height / (maxY - minY);
-
-    const offsetX = -minX * scaleX;
-    const offsetY = -minY * scaleY;
-
-    return { scaleX, scaleY, offsetX, offsetY };
-}
-
-function drawAxisLabels() {
-    const xAxisContainer = document.getElementById('x-axis-labels');
-    const yAxisContainer = document.getElementById('y-axis-labels');
-
-    // Clear previous labels
-    xAxisContainer.innerHTML = '';
-    yAxisContainer.innerHTML = '';
-
-    const gridSpacing = 20;
-
-    // X axis labels
-    for (let x = 0; x <= canvas.width; x += gridSpacing) {
-        const xLabel = document.createElement('div');
-        xLabel.textContent = x;
-        xLabel.style.position = 'absolute';
-        xLabel.style.left = `${x}px`;
-        xLabel.style.transform = 'translateX(-50%)';
-        xAxisContainer.appendChild(xLabel);
-    }
-
-    // Y axis labels
-    for (let y = 0; y <= canvas.height; y += gridSpacing) {
-        const yLabel = document.createElement('div');
-        yLabel.textContent = (canvas.height - y);
-        yLabel.style.position = 'absolute';
-        yLabel.style.bottom = `${y}px`;
-        yLabel.style.transform = 'translateY(50%)';
-        yAxisContainer.appendChild(yLabel);
-    }
-}
-
-function drawSpline() {
+// Function to draw the cubic spline
+function dibujarSpline() {
     ctx.strokeStyle = '#99eebb';
     ctx.lineWidth = 2;
 
-    const n = controlPoints.length - 1;
-
-    // Generate coefficients for cubic spline
+    const n = puntosControl.length - 1;
     let a = [], b = [], c = [], d = [];
+
     for (let i = 0; i < n; i++) {
-        a.push(controlPoints[i].y);
+        a.push(puntosControl[i].y);
         b.push(0);
         c.push(0);
         d.push(0);
     }
 
-    // Set up the system of equations
     let h = [];
     for (let i = 0; i < n; i++) {
-        h.push(controlPoints[i + 1].x - controlPoints[i].x);
+        h.push(puntosControl[i + 1].x - puntosControl[i].x);
     }
 
     let alpha = [];
     for (let i = 1; i < n; i++) {
-        alpha.push((3 / h[i]) * (controlPoints[i + 1].y - controlPoints[i].y) - (3 / h[i - 1]) * (controlPoints[i].y - controlPoints[i - 1].y));
+        alpha.push((3 / h[i]) * (puntosControl[i + 1].y - puntosControl[i].y) - (3 / h[i - 1]) * (puntosControl[i].y - puntosControl[i - 1].y));
     }
 
     let l = [1], mu = [0], z = [0];
     for (let i = 1; i < n; i++) {
-        l.push(2 * (controlPoints[i + 1].x - controlPoints[i - 1].x) - h[i - 1] * mu[i - 1]);
+        l.push(2 * (puntosControl[i + 1].x - puntosControl[i - 1].x) - h[i - 1] * mu[i - 1]);
         mu.push(h[i] / l[i]);
         z.push((alpha[i - 1] - h[i - 1] * z[i - 1]) / l[i]);
     }
@@ -163,16 +112,15 @@ function drawSpline() {
 
     for (let j = n - 1; j >= 0; j--) {
         c[j] = z[j] - mu[j] * c[j + 1];
-        b[j] = (controlPoints[j + 1].y - controlPoints[j].y) / h[j] - h[j] * (c[j + 1] + 2 * c[j]) / 3;
+        b[j] = (puntosControl[j + 1].y - puntosControl[j].y) / h[j] - h[j] * (c[j + 1] + 2 * c[j]) / 3;
         d[j] = (c[j + 1] - c[j]) / (3 * h[j]);
     }
 
-    // Draw the spline
     for (let i = 0; i < n; i++) {
-        let x0 = controlPoints[i].x;
-        let x1 = controlPoints[i + 1].x;
+        let x0 = puntosControl[i].x;
+        let x1 = puntosControl[i + 1].x;
         ctx.beginPath();
-        ctx.moveTo(x0, controlPoints[i].y);
+        ctx.moveTo(x0, puntosControl[i].y);
 
         for (let x = x0; x < x1; x++) {
             let t = (x - x0) / h[i];
@@ -183,9 +131,23 @@ function drawSpline() {
     }
 }
 
+// Function to display control points in the output box
+function mostrarPuntos() {
+    outputBox.innerHTML = '';
+    puntosControl.forEach(punto => {
+        const p = document.createElement('p');
+        p.textContent = `(${punto.x.toFixed(2)}, ${punto.y.toFixed(2)})`;
+        outputBox.appendChild(p);
+    });
+}
 
-const resetBtn = document.getElementById('reset-btn');
-resetBtn.addEventListener('click', () => {
-    controlPoints = [];
-    drawPoints();
+// Event listener for resetting the canvas
+reiniciarBtn.addEventListener('click', () => {
+    puntosControl = [];
+    clickCount = 0;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#f0f0f0';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    outputBox.innerHTML = '';
+    generarBtn.disabled = false;
 });

@@ -1,32 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Curve Graphics App</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <h1>Curve Graphics using Cubic Splines</h1>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfica de Curvas con Splines Cúbicos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Gráfica de Curvas con Splines Cúbicos</h1>
+    <label for="input-n">Ingrese n (8-12):</label>
+    <input type="number" id="input-n" min="8" max="12">
+    <button id="generar-btn">Generar Gráfica</button>
+    <button id="reiniciar-btn">Reiniciar</button>
 
-    <!-- Form for inputting X and Y values -->
-    <form id="point-form">
-      <label for="x-value">X:</label>
-      <input type="number" id="x-value" name="x-value" />
-      <label for="y-value">Y:</label>
-      <input type="number" id="y-value" name="y-value" />
-      <button type="button" id="add-point-btn">Add Point</button>
-    </form>
+    <canvas id="canvas"></canvas>
 
-    <button id="reset-btn">Reset</button>
-
-    <div id="canvas-container">
-      <canvas id="canvas"></canvas>
-      <!-- Axis labels will be drawn here -->
-      <div id="x-axis-labels"></div>
-      <div id="y-axis-labels"></div>
-    </div>
+    <div id="output-box" class="output-box"></div>
 
     <script src="app.js"></script>
-  </body>
+</body>
 </html>

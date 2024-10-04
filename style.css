@@ -1,58 +1,25 @@
 body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: Arial, sans-serif;
-}
-
-#canvas-container {
-  position: relative;
-  width: 800px;
-  height: 600px;
-  border: 1px solid black;
-  margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: Arial, sans-serif;
 }
 
 canvas {
-  position: absolute;
-  left: 40px;
-  top: 0;
+    border: 1px solid black;
+    margin-top: 20px;
 }
 
-#x-axis-labels {
-  position: absolute;
-  top: 610px; /* Adjust this value based on the height of your canvas */
-  left: 40px; /* Align with canvas */
-  width: 760px;
-  height: 30px;
-  display: flex;
-  justify-content: space-between;
-}
-
-#y-axis-labels {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 30px;
-  height: 600px;
-  display: flex;
-  flex-direction: column-reverse;
-  justify-content: space-between;
-}
-
-#point-form {
-  margin-bottom: 10px;
-}
-
-#point-form label {
-  margin-right: 5px;
-}
-
-#point-form input {
-  margin-right: 10px;
-  width: 50px;
-}
-
-#add-point-btn {
-  margin-left: 5px;
+.output-box {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+    max-width: 800px;
+    padding: 10px;
+    border: 2px solid black;
+    background-color: #f0f0f0;
+    font-family: monospace;
+    box-sizing: border-box;
+    color: #000;
 }
