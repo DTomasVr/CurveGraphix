@@ -8,15 +8,20 @@
 </head>
 <body>
     <h1>Gráfica de Curvas con Splines Cúbicos</h1>
-    <label for="input-n">Ingrese n (8-12):</label>
-    <input type="number" id="input-n" min="8" max="12">
-    <button id="generar-btn">Generar Gráfica</button>
-    <button id="reiniciar-btn">Reiniciar</button>
+    <div class="input-container">
+        <label for="input-n">Ingrese n (8-12):</label>
+        <input type="number" id="input-n" min="8" max="12" placeholder="Selecciona un número">
+    </div>
+    <div class="button-container">
+        <button id="generar-btn">Generar Gráfica</button>
+        <button id="reiniciar-btn">Reiniciar</button>
+    </div>
 
     <canvas id="canvas"></canvas>
 
     <div id="output-box" class="output-box"></div>
-
+    <div id="output-functions" class="output-box"></div>
     <script src="app.js"></script>
 </body>
 </html>
+

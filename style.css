@@ -2,24 +2,106 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-family: Arial, sans-serif;
+    font-family: 'Helvetica Neue', Arial, sans-serif; /* More modern font */
+    background-color: #f7f8fa; /* Light background for a clean look */
+    color: #333; /* Dark text for good readability */
+    padding: 20px;
+    margin: 0;
+}
+
+h1 {
+    font-size: 2.5rem; /* Larger font size for the title */
+    color: #4CAF50; /* Green color to match the buttons */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    margin-bottom: 20px;
+}
+
+label {
+    font-size: 1.1rem; /* Slightly larger label text */
+    margin-right: 10px;
+    color: #555; /* Softer color for labels */
+}
+
+input[type="number"] {
+    padding: 8px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    margin: 10px 0;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+input[type="number"]:focus {
+    border-color: #4CAF50; /* Green border on focus */
+}
+
+button {
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    border: none; /* Remove default borders */
+    padding: 10px 20px; /* Some padding */
+    text-align: center; /* Center the text */
+    text-decoration: none; /* Remove default underline */
+    display: inline-block; /* Get inline styling */
+    font-size: 16px; /* Text size */
+    margin: 10px 5px; /* Some margin for spacing */
+    cursor: pointer; /* Pointer cursor on hover */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+}
+
+button:hover {
+    background-color: #45a049; /* Darker green on hover */
+    transform: scale(1.05); /* Slight zoom-in effect */
+}
+
+button:active {
+    background-color: #3e8e41; /* Even darker green on click */
+    transform: scale(0.95); /* Slight zoom-out effect */
 }
 
 canvas {
-    border: 1px solid black;
+    border: 1px solid #ddd;
     margin-top: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 .output-box {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
     margin-top: 20px;
     max-width: 800px;
-    padding: 10px;
-    border: 2px solid black;
-    background-color: #f0f0f0;
+    padding: 15px;
+    background-color: #ffffff; /* White background for a cleaner look */
+    border: 1px solid #ddd; /* Light border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for a floating effect */
+    border-radius: 8px; /* Rounded corners */
+    transition: all 0.3s ease; /* Smooth transition for visual changes */
+}
+
+.output-box p {
+    background-color: #f9f9f9; /* Slightly darker background for individual items */
+    border: 1px solid #e0e0e0;
+    border-radius: 5px; /* Rounded corners */
+    padding: 8px 12px; /* Padding for better spacing */
+    margin: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Small shadow for depth */
     font-family: monospace;
-    box-sizing: border-box;
-    color: #000;
+    color: #333; /* Darker text color */
+    animation: fadeIn 0.5s ease; /* Animation for new items */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
